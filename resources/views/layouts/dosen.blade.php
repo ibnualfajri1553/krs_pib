@@ -65,15 +65,71 @@
         main {
             min-height: 100vh;
         }
+
+        /* Toggle Sidebar Button */
+        .sidebar-toggle {
+            display: none;
+            background-color: #20c997;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        /* Backdrop */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 1030;
+        }
+
+        /* Responsive Behavior */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: -250px;
+                width: 250px;
+                height: 100%;
+                z-index: 1040;
+                transition: all 0.3s ease;
+                display: block !important;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .sidebar-backdrop.show {
+                display: block;
+            }
+
+            .sidebar-toggle {
+                display: inline-block;
+            }
+
+            main {
+                margin-left: 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
+
+<!-- Backdrop -->
+<div class="sidebar-backdrop" onclick="toggleSidebar()"></div>
 
 <div class="container-fluid">
     <div class="row">
 
         {{-- Sidebar --}}
-        <nav class="col-md-2 d-none d-md-block sidebar">
+        <nav id="sidebar" class="col-md-2 d-none d-md-block sidebar">
             <div class="text-center mb-4 sidebar-brand">
                 <img src="{{ asset('images/logo.png') }}" alt="Logo" class="img-fluid">
                 <div><i class="bi bi-person-badge-fill me-1"></i> Dosen Panel</div>
@@ -116,7 +172,13 @@
         <main class="col-md-10 ms-sm-auto px-md-4">
             {{-- Topbar --}}
             <div class="topbar d-flex justify-content-between align-items-center">
-                <div class="fs-5 fw-semibold">@yield('title', 'Dashboard')</div>
+                <div class="d-flex align-items-center">
+                    <!-- Toggle hanya di HP -->
+                    <button class="sidebar-toggle me-3 d-md-none" onclick="toggleSidebar()">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div class="fs-5 fw-semibold">@yield('title', 'Dashboard')</div>
+                </div>
                 <div class="username">
                     <i class="bi bi-person-circle me-1"></i>
                     {{ Auth::user()->username ?? 'Dosen' }}
@@ -131,6 +193,16 @@
 
     </div>
 </div>
+
+<!-- Script Toggle Sidebar -->
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.querySelector('.sidebar-backdrop');
+        sidebar.classList.toggle('show');
+        backdrop.classList.toggle('show');
+    }
+</script>
 
 @stack('scripts')
 </body>
